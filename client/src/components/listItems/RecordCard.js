@@ -4,7 +4,7 @@ import RemoveContact from '../buttons/RemoveContact'
 import UpdateContact from '../forms/UpdateContact'
 import { EditOutlined } from '@ant-design/icons'
 
-const ContactCard = props => {
+const RecordCard = props => {
   const [editMode, setEditMode] = useState(false)
   const styles = getStyles()
   const { id, firstName, lastName } = props
@@ -43,4 +43,4 @@ const getStyles = () => ({
   }
 })
 
-export default ContactCard
+export default RecordCard
