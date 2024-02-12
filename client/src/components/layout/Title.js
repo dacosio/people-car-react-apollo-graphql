@@ -1,15 +1,11 @@
+import { Typography } from "@mui/material";
+
 const Title = () => {
-  const styles = getStyles()
+  return (
+    <Typography variant="h4" marginBottom={10} fontWeight="bold">
+      People and their Cars
+    </Typography>
+  );
+};
 
-  return <h1 style={styles.title}>People and their Cars</h1>
-}
-
-const getStyles = () => ({
-  title: {
-    fontSize: 20,
-    padding: '15px',
-    marginBottom: '50px'
-  }
-})
-
-export default Title
+export default Title;

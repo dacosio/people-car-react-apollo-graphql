@@ -37,7 +37,11 @@ const AddPerson = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Typography variant="h5" align="center" sx={{ marginBottom: 2 }}>
+      <Typography
+        variant="h5"
+        align="center"
+        marginBottom={2}
+        fontWeight="bold">
         Add a Person
       </Typography>
       <Grid container spacing={2} sx={{ marginBottom: 5 }}>

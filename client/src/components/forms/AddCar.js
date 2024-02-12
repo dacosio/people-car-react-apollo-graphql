@@ -51,7 +51,11 @@ const AddCar = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Typography variant="h5" align="center" sx={{ marginBottom: 2 }}>
+      <Typography
+        variant="h5"
+        align="center"
+        marginBottom={2}
+        fontWeight="bold">
         Add a Car
       </Typography>
       <Grid container spacing={2} sx={{ marginBottom: 5 }}>
@@ -110,11 +114,12 @@ const AddCar = () => {
               <MenuItem value="" disabled>
                 Select an option
               </MenuItem>
-              {data.people.map((person, idx) => (
-                <MenuItem key={idx} value={person.id}>
-                  {person.firstName} {person.lastName}
-                </MenuItem>
-              ))}
+              {data &&
+                data.people.map((person, idx) => (
+                  <MenuItem key={idx} value={person.id}>
+                    {person.firstName} {person.lastName}
+                  </MenuItem>
+                ))}
             </Select>
           </FormControl>
         </Grid>
