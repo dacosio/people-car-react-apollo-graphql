@@ -1,8 +1,34 @@
 import { Typography, Container, Grid, Button, Stack } from "@mui/material";
 import React from "react";
 import formatCurrency from "../../utils/formatCurrency";
+import { useMutation } from "@apollo/client";
+import { GET_CARS, REMOVE_CAR } from "../../graphql/queries";
 
 const CarPersonItem = ({ firstName, lastName, cars }) => {
+  const [removeCar] = useMutation(REMOVE_CAR);
+
+  const handleDeleteCar = (id) => {
+    let result = window.confirm("Are you sure you want to delete this car?");
+
+    if (result) {
+      removeCar({
+        variables: {
+          id,
+        },
+        update(cache) {
+          cache.modify({
+            fields: {
+              cars(existingCarsRefs, { readField }) {
+                return existingCarsRefs.filter(
+                  (carRef) => id !== readField("id", carRef)
+                );
+              },
+            },
+          });
+        },
+      });
+    }
+  };
   return (
     <Container sx={{ marginBottom: 2 }}>
       <Grid
@@ -36,7 +62,7 @@ const CarPersonItem = ({ firstName, lastName, cars }) => {
           </Stack>
         </Grid>
       </Grid>
-      {cars.slice(0, 3).map(({ year, make, model, price }, idx) => (
+      {cars.slice(0, 3).map(({ id, year, make, model, price }, idx) => (
         <Grid
           container
           justifyContent="space-between"
@@ -61,7 +87,7 @@ const CarPersonItem = ({ firstName, lastName, cars }) => {
                 variant="outlined"
                 color="error"
                 size="small"
-                onClick={() => null}>
+                onClick={() => handleDeleteCar(id)}>
                 Delete
               </Button>
             </Stack>

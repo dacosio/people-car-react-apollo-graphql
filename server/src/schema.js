@@ -221,10 +221,15 @@ const resolvers = {
         (person) => person.id === deletedCar.personId
       );
       if (personIndex !== -1) {
-        people[personIndex].cars = people[personIndex].cars.filter(
-          (car) => car.id !== id
-        );
+        if (people[personIndex].cars) {
+          // Check if cars array is defined
+          people[personIndex].cars = people[personIndex].cars.filter(
+            (car) => car.id !== id
+          );
+        }
       }
+      console.log("🚀 ~ deletedCar:", deletedCar);
+
       return deletedCar;
     },
   },
