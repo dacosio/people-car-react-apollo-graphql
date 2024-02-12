@@ -41,7 +41,8 @@ const CarPersonItem = ({ firstName, lastName, cars }) => {
           container
           justifyContent="space-between"
           alignItems="center"
-          marginBottom={1}>
+          marginBottom={1}
+          key={idx}>
           <Grid item>
             <Typography marginLeft={2} variant="body1" key={idx}>
               {year} {make} {model} {formatCurrency(price)}

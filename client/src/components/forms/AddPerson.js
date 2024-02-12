@@ -14,23 +14,29 @@ const AddPerson = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     addPerson({
       variables: {
         firstName,
         lastName,
       },
-      update: (cache, { data: { addPerson } }) => {
+      update: (cache, { data: { createPerson } }) => {
         const data = cache.readQuery({ query: GET_PEOPLE });
-
+        const personWithCars = {
+          ...createPerson,
+          cars: createPerson.cars || [],
+        };
         cache.writeQuery({
           query: GET_PEOPLE,
           data: {
             ...data,
-            peopl: [...data.people, addPerson],
+            people: [...data.people, personWithCars],
           },
         });
       },
     });
+    setFirstName("");
+    setLastName("");
   };
 
   const isFormValid = firstName.trim() !== "" && lastName.trim() !== "";

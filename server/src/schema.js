@@ -95,7 +95,7 @@ const typeDefs = `
     id: String!
     firstName: String!
     lastName: String!
-    cars: [Car]!
+    cars: [Car]
   }
 
   type Car {
