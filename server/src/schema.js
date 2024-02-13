@@ -159,13 +159,6 @@ const resolvers = {
       return deletedPerson;
     },
     createCar: (_, { year, make, model, price, personId }) => {
-      console.log("🚀 ~ { year, make, model, price, personId }:", {
-        year,
-        make,
-        model,
-        price,
-        personId,
-      });
       const newCar = {
         id: String(cars.length + 1),
         year,
@@ -175,11 +168,8 @@ const resolvers = {
         personId,
       };
       cars.push(newCar);
-      // Update the cars array for the associated person
-      const personIndex = people.findIndex((person) => person.id === personId);
-      if (personIndex !== -1) {
-        people[personIndex].cars.push(newCar);
-      }
+      console.log("🚀 ~ newCar:", newCar);
+
       return newCar;
     },
     updateCar: (_, { id, year, make, model, price, personId }) => {
