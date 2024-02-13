@@ -18,6 +18,7 @@ const CarPerson = () => {
         data.people.map((person) => (
           <CarPersonItem
             key={person.id}
+            id={person.id}
             firstName={person.firstName}
             lastName={person.lastName}
             cars={cars.cars.filter((car) => car.personId === person.id)}

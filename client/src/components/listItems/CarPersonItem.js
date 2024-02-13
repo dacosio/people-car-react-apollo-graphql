@@ -2,10 +2,11 @@ import { Typography, Container, Grid, Button, Stack } from "@mui/material";
 import React from "react";
 import formatCurrency from "../../utils/formatCurrency";
 import { useMutation } from "@apollo/client";
-import { GET_CARS, REMOVE_CAR } from "../../graphql/queries";
+import { GET_CARS, REMOVE_CAR, REMOVE_PERSON } from "../../graphql/queries";
 
-const CarPersonItem = ({ firstName, lastName, cars }) => {
+const CarPersonItem = ({ id, firstName, lastName, cars }) => {
   const [removeCar] = useMutation(REMOVE_CAR);
+  const [removePerson] = useMutation(REMOVE_PERSON);
 
   const handleDeleteCar = (id) => {
     let result = window.confirm("Are you sure you want to delete this car?");
@@ -21,6 +22,29 @@ const CarPersonItem = ({ firstName, lastName, cars }) => {
               cars(existingCarsRefs, { readField }) {
                 return existingCarsRefs.filter(
                   (carRef) => id !== readField("id", carRef)
+                );
+              },
+            },
+          });
+        },
+      });
+    }
+  };
+
+  const handleDeletePerson = (id) => {
+    console.log("🚀 ~ handleDeletePerson ~ id:", id);
+    let result = window.confirm("Are you sure you want to delete this car?");
+    if (result) {
+      removePerson({
+        variables: {
+          id,
+        },
+        update(cache) {
+          cache.modify({
+            fields: {
+              people(existingPeopleRefs, { readField }) {
+                return existingPeopleRefs.filter(
+                  (peopleRef) => id !== readField("id", peopleRef)
                 );
               },
             },
@@ -56,7 +80,7 @@ const CarPersonItem = ({ firstName, lastName, cars }) => {
               variant="contained"
               color="error"
               size="small"
-              onClick={() => null}>
+              onClick={() => handleDeletePerson(id)}>
               Delete
             </Button>
           </Stack>
