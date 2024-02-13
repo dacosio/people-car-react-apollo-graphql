@@ -62,38 +62,39 @@ const CarPersonItem = ({ firstName, lastName, cars }) => {
           </Stack>
         </Grid>
       </Grid>
-      {cars.slice(0, 3).map(({ id, year, make, model, price }, idx) => (
-        <Grid
-          container
-          justifyContent="space-between"
-          alignItems="center"
-          marginBottom={1}
-          key={idx}>
-          <Grid item>
-            <Typography marginLeft={2} variant="body1" key={idx}>
-              {year} {make} {model} {formatCurrency(price)}
-            </Typography>
+      {cars &&
+        cars.slice(0, 5).map(({ id, year, make, model, price }, idx) => (
+          <Grid
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            marginBottom={1}
+            key={idx}>
+            <Grid item>
+              <Typography marginLeft={2} variant="body1" key={idx}>
+                {year} {make} {model} {formatCurrency(price)}
+              </Typography>
+            </Grid>
+            <Grid item paddingRight={2}>
+              <Stack spacing={1} direction="row">
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  size="small"
+                  onClick={() => null}>
+                  Edit
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  size="small"
+                  onClick={() => handleDeleteCar(id)}>
+                  Delete
+                </Button>
+              </Stack>
+            </Grid>
           </Grid>
-          <Grid item paddingRight={2}>
-            <Stack spacing={1} direction="row">
-              <Button
-                variant="outlined"
-                color="secondary"
-                size="small"
-                onClick={() => null}>
-                Edit
-              </Button>
-              <Button
-                variant="outlined"
-                color="error"
-                size="small"
-                onClick={() => handleDeleteCar(id)}>
-                Delete
-              </Button>
-            </Stack>
-          </Grid>
-        </Grid>
-      ))}
+        ))}
     </Container>
   );
 };

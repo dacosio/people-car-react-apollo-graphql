@@ -20,6 +20,7 @@ const AddCar = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     addCar({
       variables: {
         year: Number(year),
@@ -28,14 +29,14 @@ const AddCar = () => {
         price: parseFloat(price),
         personId: option,
       },
-      update: (cache, { data: { addCar } }) => {
-        const data = cache.readQuery({ query: GET_CARS });
 
+      update: (cache, { data: { createCar } }) => {
+        const cachedCarData = cache.readQuery({ query: GET_CARS });
         cache.writeQuery({
           query: GET_CARS,
           data: {
-            ...data,
-            cars: [...data.cars, addCar],
+            ...cachedCarData,
+            cars: [...cachedCarData.cars, createCar],
           },
         });
       },
