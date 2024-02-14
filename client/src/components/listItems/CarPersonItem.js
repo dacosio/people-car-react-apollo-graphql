@@ -30,7 +30,7 @@ const CarPersonItem = ({ id, firstName, lastName, cars }) => {
   const [firstVal, setFirstVal] = useState(firstName);
   const [lastVal, setLastVal] = useState(lastName);
 
-  const [year, setYear] = useState(0);
+  const [year, setYear] = useState("");
   const [make, setMake] = useState("");
   const [model, setModel] = useState("");
   const [price, setPrice] = useState("");
@@ -112,7 +112,12 @@ const CarPersonItem = ({ id, firstName, lastName, cars }) => {
   };
 
   const [editCarId, setEditCarId] = useState(null);
-
+  const isCarFormValid =
+    year.toString().trim() !== "" &&
+    make.trim() !== "" &&
+    model.trim() !== "" &&
+    price.toString().trim() !== "" &&
+    option !== "";
   return (
     <Container sx={{ marginBottom: 2 }}>
       <Grid
@@ -200,147 +205,167 @@ const CarPersonItem = ({ id, firstName, lastName, cars }) => {
       {cars &&
         cars
           .slice(0, 5)
-          .map(({ id, year, make, model, price, personId }, idx) => (
-            <Grid
-              container
-              justifyContent="space-between"
-              alignItems="center"
-              marginBottom={1}
-              key={idx}>
-              {!editCarId || editCarId !== id ? (
-                <Grid
-                  container
-                  justifyContent="space-between"
-                  alignItems="center">
-                  <Grid item>
-                    <Typography marginLeft={2} variant="body1" key={id + year}>
-                      {year} {make} {model} {formatCurrency(price)}
-                    </Typography>
-                  </Grid>
-                  <Grid item paddingRight={2}>
-                    <Stack spacing={1} direction="row">
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        size="small"
-                        onClick={() => {
-                          setEditCarId(id);
-                        }}>
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        size="small"
-                        onClick={() => handleDeleteCar(id)}>
-                        Delete
-                      </Button>
-                    </Stack>
-                  </Grid>
-                </Grid>
-              ) : (
-                <Grid
-                  container
-                  justifyContent="space-between"
-                  alignItems="center"
-                  flexWrap="nowrap">
-                  {/* <form onSubmit={handleSubmit}> */}
+          .map(
+            (
+              {
+                id: cId,
+                year: cYear,
+                make: cMake,
+                model: cModel,
+                price: cPrice,
+                personId: cPersonId,
+              },
+              idx
+            ) => (
+              <Grid
+                container
+                justifyContent="space-between"
+                alignItems="center"
+                marginBottom={1}
+                key={cId}>
+                {!editCarId || editCarId !== cId ? (
                   <Grid
                     container
-                    flex={"row"}
-                    spacing={2}
-                    sx={{ marginBottom: 0 }}>
-                    <Grid item xs={2}>
-                      <FormControl fullWidth>
-                        <TextField
-                          label="Year"
-                          value={year}
-                          onChange={(e) => setYear(e.target.value)}
-                          fullWidth
-                          size="small"
-                        />
-                      </FormControl>
+                    justifyContent="space-between"
+                    alignItems="center">
+                    <Grid item>
+                      <Typography
+                        marginLeft={2}
+                        variant="body1"
+                        key={cId + year}>
+                        {cYear} {cMake} {cModel} {formatCurrency(cPrice)}
+                      </Typography>
                     </Grid>
-                    <Grid item xs={2}>
-                      <FormControl fullWidth>
-                        <TextField
-                          label="Make"
-                          value={make}
-                          onChange={(e) => setMake(e.target.value)}
-                          fullWidth
+                    <Grid item paddingRight={2}>
+                      <Stack spacing={1} direction="row">
+                        <Button
+                          variant="outlined"
+                          color="secondary"
                           size="small"
-                        />
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={2}>
-                      <FormControl fullWidth>
-                        <TextField
-                          label="Model"
-                          value={model}
-                          onChange={(e) => setModel(e.target.value)}
-                          fullWidth
+                          onClick={() => {
+                            setEditCarId(cId);
+                            setEditCarId(cId);
+                            setYear(cYear);
+                            setMake(cMake);
+                            setModel(cModel);
+                            setPrice(cPrice);
+                            setOption(cPersonId);
+                          }}>
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          color="error"
                           size="small"
-                        />
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={2}>
-                      <FormControl fullWidth>
-                        <TextField
-                          label="Price"
-                          value={price}
-                          onChange={(e) => setPrice(e.target.value)}
-                          fullWidth
-                          size="small"
-                        />
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={2}>
-                      <FormControl fullWidth>
-                        <Select
-                          value={personId}
-                          onChange={(e) => setOption(e.target.value)}
-                          displayEmpty
-                          fullWidth
-                          size="small">
-                          <MenuItem value="" disabled>
-                            Select an option
-                          </MenuItem>
-                          {data &&
-                            data.people.map((person, idx) => (
-                              <MenuItem key={idx} value={person.id}>
-                                {person.firstName} {person.lastName}
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      </FormControl>
+                          onClick={() => handleDeleteCar(cId)}>
+                          Delete
+                        </Button>
+                      </Stack>
                     </Grid>
                   </Grid>
-                  {/* </form> */}
-                  <Grid item paddingRight={2}>
-                    <Stack spacing={1} direction="row">
-                      <Button
-                        variant="outlined"
-                        color="warning"
-                        size="small"
-                        onClick={() => {
-                          // setEditCarId(id);
-                          console.log("submitted");
-                        }}>
-                        Submit
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        size="small"
-                        onClick={() => setEditCarId(null)}>
-                        Cancel
-                      </Button>
-                    </Stack>
+                ) : (
+                  <Grid
+                    container
+                    justifyContent="space-between"
+                    alignItems="center"
+                    flexWrap="nowrap">
+                    <Grid
+                      container
+                      flex={"row"}
+                      spacing={2}
+                      sx={{ marginBottom: 0 }}>
+                      <Grid item xs={2}>
+                        <FormControl fullWidth>
+                          <TextField
+                            label="Year"
+                            value={year}
+                            onChange={(e) => setYear(e.target.value)}
+                            fullWidth
+                            size="small"
+                          />
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={2}>
+                        <FormControl fullWidth>
+                          <TextField
+                            label="Make"
+                            value={make}
+                            onChange={(e) => setMake(e.target.value)}
+                            fullWidth
+                            size="small"
+                          />
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={2}>
+                        <FormControl fullWidth>
+                          <TextField
+                            label="Model"
+                            value={model}
+                            onChange={(e) => setModel(e.target.value)}
+                            fullWidth
+                            size="small"
+                          />
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={2}>
+                        <FormControl fullWidth>
+                          <TextField
+                            label="Price"
+                            value={price}
+                            onChange={(e) => setPrice(e.target.value)}
+                            fullWidth
+                            size="small"
+                          />
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={2}>
+                        <FormControl fullWidth>
+                          <Select
+                            value={option}
+                            onChange={(e) => setOption(e.target.value)}
+                            displayEmpty
+                            fullWidth
+                            size="small">
+                            <MenuItem value="" disabled>
+                              Select an option
+                            </MenuItem>
+                            {data &&
+                              data.people.map((person, idx) => (
+                                <MenuItem key={idx} value={person.id}>
+                                  {person.firstName} {person.lastName}
+                                </MenuItem>
+                              ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                    </Grid>
+                    <Grid item paddingRight={2}>
+                      <Stack spacing={1} direction="row">
+                        <Button
+                          variant="outlined"
+                          color="warning"
+                          size="small"
+                          disabled={!isCarFormValid}
+                          onClick={() => {
+                            // setEditCarId(id);
+                            console.log("submitted");
+                          }}>
+                          Submit
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          size="small"
+                          onClick={() => setEditCarId(null)}>
+                          Cancel
+                        </Button>
+                      </Stack>
+                    </Grid>
                   </Grid>
-                </Grid>
-              )}
-            </Grid>
-          ))}
+                )}
+              </Grid>
+            )
+          )}
     </Container>
   );
 };
