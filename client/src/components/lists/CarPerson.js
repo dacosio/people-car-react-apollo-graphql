@@ -8,6 +8,7 @@ const CarPerson = () => {
   const { data } = useQuery(GET_PEOPLE);
   const { data: cars } = useQuery(GET_CARS);
 
+  if (data && data.people.length === 0) return;
   return (
     <Container>
       <Typography

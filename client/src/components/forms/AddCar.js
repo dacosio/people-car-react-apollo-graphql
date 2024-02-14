@@ -49,6 +49,7 @@ const AddCar = () => {
     model.trim() !== "" &&
     price.trim() !== "" &&
     option !== "";
+  if (data && data.people.length === 0) return;
 
   return (
     <form onSubmit={handleSubmit}>
