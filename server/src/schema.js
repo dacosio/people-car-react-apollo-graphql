@@ -155,7 +155,7 @@ const resolvers = {
       if (personIndex === -1) return null;
       const deletedPerson = people.splice(personIndex, 1)[0];
       // Remove cars associated with the deleted person
-      cars = cars.filter((car) => car.personId !== id); // This line might cause issues
+      cars = cars.filter((car) => car.personId !== id);
       return deletedPerson;
     },
     createCar: (_, { year, make, model, price, personId }) => {
@@ -168,38 +168,22 @@ const resolvers = {
         personId,
       };
       cars.push(newCar);
-      console.log("🚀 ~ newCar:", newCar);
 
       return newCar;
     },
     updateCar: (_, { id, year, make, model, price, personId }) => {
       const carIndex = cars.findIndex((car) => car.id === id);
       if (carIndex === -1) return null;
+
       if (year) cars[carIndex].year = year;
       if (make) cars[carIndex].make = make;
       if (model) cars[carIndex].model = model;
       if (price) cars[carIndex].price = price;
-      // Update the associated person's cars array if personId is changed
-      if (personId && cars[carIndex].personId !== personId) {
-        // Remove the car from the current person's cars array
-        const currentPersonIndex = people.findIndex(
-          (person) => person.id === cars[carIndex].personId
-        );
-        if (currentPersonIndex !== -1) {
-          people[currentPersonIndex].cars = people[
-            currentPersonIndex
-          ].cars.filter((car) => car.id !== id);
-        }
-        // Add the car to the new person's cars array
-        const newPersonIndex = people.findIndex(
-          (person) => person.id === personId
-        );
-        if (newPersonIndex !== -1) {
-          people[newPersonIndex].cars.push(cars[carIndex]);
-        }
-        // Update the personId for the car
+
+      if (personId !== undefined) {
         cars[carIndex].personId = personId;
       }
+
       return cars[carIndex];
     },
     deleteCar: (_, { id }) => {

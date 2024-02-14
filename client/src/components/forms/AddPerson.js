@@ -79,7 +79,8 @@ const AddPerson = () => {
             color="primary"
             type="submit"
             fullWidth
-            disabled={!isFormValid}>
+            disabled={!isFormValid}
+            >
             Submit
           </Button>
         </Grid>

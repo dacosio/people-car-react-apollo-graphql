@@ -93,6 +93,7 @@ const CarPersonItem = ({ id, firstName, lastName, cars }) => {
       },
     });
   };
+  const isFormValid = firstVal.trim() !== "" && lastVal.trim() !== "";
 
   return (
     <Container sx={{ marginBottom: 2 }}>
@@ -162,6 +163,7 @@ const CarPersonItem = ({ id, firstName, lastName, cars }) => {
                   variant="contained"
                   color="warning"
                   size="small"
+                  disabled={!isFormValid}
                   onClick={handleUpdatePerson}>
                   Submit
                 </Button>
