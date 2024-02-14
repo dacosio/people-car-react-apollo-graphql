@@ -10,7 +10,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-
+import { Link } from "react-router-dom";
 import formatCurrency from "../../utils/formatCurrency";
 import { useMutation, useQuery } from "@apollo/client";
 import {
@@ -396,11 +396,17 @@ const CarPersonItem = ({ id, firstName, lastName, cars }) => {
               </Grid>
             )
           )}
-      <div style={{ textAlign: "center" }}>
-        <Button variant="text" size="small" color="info">
-          Learn More
-        </Button>
-      </div>
+      <Link to={`/people/${id}`}>
+        <div style={{ textAlign: "center" }}>
+          <Button
+            variant="text"
+            size="small"
+            color="info"
+            onClick={() => console.log(id)}>
+            Learn More
+          </Button>
+        </div>
+      </Link>
     </Container>
   );
 };
