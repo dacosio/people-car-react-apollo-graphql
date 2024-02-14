@@ -396,6 +396,11 @@ const CarPersonItem = ({ id, firstName, lastName, cars }) => {
               </Grid>
             )
           )}
+      <div style={{ textAlign: "center" }}>
+        <Button variant="text" size="small" color="info">
+          Learn More
+        </Button>
+      </div>
     </Container>
   );
 };
