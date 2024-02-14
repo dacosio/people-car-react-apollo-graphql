@@ -10,7 +10,11 @@ const CarPerson = () => {
 
   return (
     <Container>
-      <Typography variant="h5" align="center" fontWeight="bold">
+      <Typography
+        variant="h5"
+        align="center"
+        fontWeight="bold"
+        marginBottom={2}>
         Records
       </Typography>
       {cars &&

@@ -18,12 +18,15 @@ import {
   REMOVE_CAR,
   REMOVE_PERSON,
   UPDATE_PERSON,
+  UPDATE_CAR,
+  GET_CARS,
 } from "../../graphql/queries";
 
 const CarPersonItem = ({ id, firstName, lastName, cars }) => {
   const [removeCar] = useMutation(REMOVE_CAR);
   const [removePerson] = useMutation(REMOVE_PERSON);
   const [updatePerson] = useMutation(UPDATE_PERSON);
+  const [updateCar] = useMutation(UPDATE_CAR);
   const { data } = useQuery(GET_PEOPLE);
 
   const [edit, setEdit] = useState(false);
@@ -35,9 +38,7 @@ const CarPersonItem = ({ id, firstName, lastName, cars }) => {
   const [model, setModel] = useState("");
   const [price, setPrice] = useState("");
   const [option, setOption] = useState("");
-  const [editCar, setEditCar] = useState(false);
-  const [selectedCarIndex, setSelectedCarIndex] = useState(-1);
-  const [carVal, setCarVal] = useState();
+  const [editCarId, setEditCarId] = useState(null);
 
   const handleDeleteCar = (id) => {
     let result = window.confirm("Are you sure you want to delete this car?");
@@ -106,18 +107,41 @@ const CarPersonItem = ({ id, firstName, lastName, cars }) => {
     });
   };
   const isFormValid = firstVal.trim() !== "" && lastVal.trim() !== "";
-  const handleSubmit = (e) => {
-    e.preventDefault();
+
+  const handleUpdateCar = (cId, option, year, make, model, price) => {
+    updateCar({
+      variables: {
+        id: cId,
+        year: Number(year),
+        make,
+        model,
+        price: parseFloat(price),
+        personId: option,
+      },
+
+      update: (cache, { data: { updateCar } }) => {
+        const cachedCarData = cache.readQuery({ query: GET_CARS });
+        const updatedCars = cachedCarData.cars.map((car) =>
+          car.id === cId ? updateCar : car
+        );
+        cache.writeQuery({
+          query: GET_CARS,
+          data: {
+            ...cachedCarData,
+            cars: updatedCars,
+          },
+        });
+      },
+    });
     setEditCarId(null);
   };
-
-  const [editCarId, setEditCarId] = useState(null);
   const isCarFormValid =
     year.toString().trim() !== "" &&
     make.trim() !== "" &&
     model.trim() !== "" &&
     price.toString().trim() !== "" &&
     option !== "";
+
   return (
     <Container sx={{ marginBottom: 2 }}>
       <Grid
@@ -347,8 +371,14 @@ const CarPersonItem = ({ id, firstName, lastName, cars }) => {
                           size="small"
                           disabled={!isCarFormValid}
                           onClick={() => {
-                            // setEditCarId(id);
-                            console.log("submitted");
+                            handleUpdateCar(
+                              cId,
+                              option,
+                              year,
+                              make,
+                              model,
+                              price
+                            );
                           }}>
                           Submit
                         </Button>
