@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Container,
@@ -20,6 +20,8 @@ import {
   UPDATE_PERSON,
   UPDATE_CAR,
   GET_CARS,
+  GET_CAR,
+  GET_PERSON,
 } from "../../graphql/queries";
 
 const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
@@ -37,7 +39,7 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
   const [make, setMake] = useState("");
   const [model, setModel] = useState("");
   const [price, setPrice] = useState("");
-  const [option, setOption] = useState("");
+  const [option, setOption] = useState(itemPersonId);
   const [editCarId, setEditCarId] = useState(null);
 
   const handleDeleteCar = (id) => {
@@ -108,6 +110,77 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
   };
   const isFormValid = firstVal.trim() !== "" && lastVal.trim() !== "";
 
+  const handleUpdatePersonCar = (cId, option, year, make, model, price) => {
+    updateCar({
+      variables: {
+        id: cId,
+        year: Number(year),
+        make,
+        model,
+        price: parseFloat(price),
+        personId: option,
+      },
+
+      update: (cache, { data: { updateCar } }) => {
+        console.log("🚀 ~ handleUpdateCar ~ updateCar:", updateCar);
+        const cachedCarData = cache.readQuery({ query: GET_CARS });
+        const cachedPerson = cache.readQuery({
+          query: GET_PERSON,
+          variables: {
+            id: itemPersonId,
+          },
+        });
+        const updatedCars = cachedCarData.cars.map((car) =>
+          car.id === cId ? updateCar : car
+        );
+        let updatedSingleCar;
+        if (cachedPerson) {
+          console.log("🚀 ~ handleUpdateCar ~ cachedPerson:", cachedPerson);
+
+          updatedSingleCar =
+            cachedPerson.person.cars
+              .filter((car) => car.id !== updateCar.id)
+              .map((c) => {
+                return {
+                  personId: itemPersonId,
+                  ...c,
+                };
+              }) || [];
+        }
+        // if (itemPersonId && cachedPerson) {
+        //   console.log("item");
+        //   const updatedSingleCar = cachedPerson.person.cars.filter(
+        //     (car) => car.id !== updateCar.id
+        //   );
+        //   console.log(
+        //     "🚀 ~ handleUpdateCar ~ updatedSingleCar:",
+        //     updatedSingleCar
+        //   );
+        //   console.log("🚀 ~ handleUpdateCar ~ cachedPerson:", cachedPerson);
+        //   console.log(updateCar.id);
+
+        //   cache.writeQuery({
+        //     query: GET_PERSON,
+        //     date: {
+        //       ...cachedPerson,
+        //       cars: updatedSingleCar,
+        //     },
+        //   });
+        // }
+        console.log(updatedSingleCar);
+        cache.writeQuery({
+          query: GET_CARS,
+          data: {
+            ...cachedCarData,
+            // cars: itemPersonId && cachedPerson ? updatedSingleCar : updatedCars,
+            cars: updatedCars,
+          },
+        });
+      },
+    });
+    setEditCarId(null);
+  };
+
   const handleUpdateCar = (cId, option, year, make, model, price) => {
     updateCar({
       variables: {
@@ -116,7 +189,7 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
         make,
         model,
         price: parseFloat(price),
-        personId: itemPersonId ? itemPersonId : option,
+        personId: option,
       },
 
       update: (cache, { data: { updateCar } }) => {
@@ -124,6 +197,7 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
         const updatedCars = cachedCarData.cars.map((car) =>
           car.id === cId ? updateCar : car
         );
+
         cache.writeQuery({
           query: GET_CARS,
           data: {
@@ -135,6 +209,7 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
     });
     setEditCarId(null);
   };
+
   const isCarFormValid =
     year.toString().trim() !== "" &&
     make.trim() !== "" &&
@@ -273,7 +348,9 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
                             setMake(cMake);
                             setModel(cModel);
                             setPrice(cPrice);
-                            setOption(cPersonId);
+                            itemPersonId
+                              ? setOption(itemPersonId)
+                              : setOption(cPersonId);
                           }}>
                           Edit
                         </Button>
@@ -345,7 +422,7 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
                       <Grid item xs={2}>
                         <FormControl fullWidth>
                           <Select
-                            value={itemPersonId ? itemPersonId : option}
+                            value={option}
                             onChange={(e) => setOption(e.target.value)}
                             displayEmpty
                             fullWidth
@@ -396,17 +473,15 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
               </Grid>
             )
           )}
-      {!itemPersonId && <Link to={`/people/${id}`}>
-        <div style={{ textAlign: "center" }}>
-          <Button
-            variant="text"
-            size="small"
-            color="info"
-            onClick={() => console.log(id)}>
-            Learn More
-          </Button>
-        </div>
-      </Link>}
+      {!itemPersonId && (
+        <Link to={`/people/${id}`}>
+          <div style={{ textAlign: "center" }}>
+            <Button variant="text" size="small" color="info">
+              Learn More
+            </Button>
+          </div>
+        </Link>
+      )}
     </Container>
   );
 };
