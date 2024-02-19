@@ -22,7 +22,7 @@ import {
   GET_CARS,
 } from "../../graphql/queries";
 
-const CarPersonItem = ({ id, firstName, lastName, cars }) => {
+const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
   const [removeCar] = useMutation(REMOVE_CAR);
   const [removePerson] = useMutation(REMOVE_PERSON);
   const [updatePerson] = useMutation(UPDATE_PERSON);
@@ -116,7 +116,7 @@ const CarPersonItem = ({ id, firstName, lastName, cars }) => {
         make,
         model,
         price: parseFloat(price),
-        personId: option,
+        personId: itemPersonId ? itemPersonId : option,
       },
 
       update: (cache, { data: { updateCar } }) => {
@@ -345,7 +345,7 @@ const CarPersonItem = ({ id, firstName, lastName, cars }) => {
                       <Grid item xs={2}>
                         <FormControl fullWidth>
                           <Select
-                            value={option}
+                            value={itemPersonId ? itemPersonId : option}
                             onChange={(e) => setOption(e.target.value)}
                             displayEmpty
                             fullWidth
@@ -396,7 +396,7 @@ const CarPersonItem = ({ id, firstName, lastName, cars }) => {
               </Grid>
             )
           )}
-      <Link to={`/people/${id}`}>
+      {!itemPersonId && <Link to={`/people/${id}`}>
         <div style={{ textAlign: "center" }}>
           <Button
             variant="text"
@@ -406,7 +406,7 @@ const CarPersonItem = ({ id, firstName, lastName, cars }) => {
             Learn More
           </Button>
         </div>
-      </Link>
+      </Link>}
     </Container>
   );
 };

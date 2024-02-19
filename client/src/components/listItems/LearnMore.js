@@ -1,9 +1,10 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Container } from "@mui/material";
+import { Container, Grid, Typography } from "@mui/material";
 import { useQuery } from "@apollo/client";
 import { GET_PERSON } from "../../graphql/queries";
+import CarPersonItem from "./CarPersonItem";
 
 const LearnMore = () => {
   const { id } = useParams();
@@ -19,7 +20,23 @@ const LearnMore = () => {
   // const { id: personId, firstName, lastName, cars } = data;
   return (
     <Container>
-      <ArrowBackIcon onClick={() => navigate(-1)} fontSize="large" />
+      <Grid
+        alignItems="flex-start"
+        display="flex"
+        marginTop={5}
+        onClick={() => navigate(-1)}
+        sx={{ cursor: "pointer" }}>
+        <ArrowBackIcon fontSize="medium" />
+
+        <Typography
+          variant="body1"
+          marginBottom={2}
+          fontWeight="bold"
+          paddingLeft={1}>
+          Back
+        </Typography>
+      </Grid>
+      {data && <CarPersonItem {...data.person} itemPersonId={id} />}
     </Container>
   );
 };
