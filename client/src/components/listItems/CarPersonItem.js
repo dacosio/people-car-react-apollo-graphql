@@ -10,7 +10,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import formatCurrency from "../../utils/formatCurrency";
 import { useMutation, useQuery } from "@apollo/client";
 import {
@@ -25,6 +25,7 @@ import {
 } from "../../graphql/queries";
 
 const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
+  const navigate = useNavigate();
   const [removeCar] = useMutation(REMOVE_CAR);
   const [removePerson] = useMutation(REMOVE_PERSON);
   const [updatePerson] = useMutation(UPDATE_PERSON);
@@ -66,7 +67,8 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
   };
 
   const handleDeletePerson = () => {
-    let result = window.confirm("Are you sure you want to delete this car?");
+    let result = window.confirm("Are you sure you want to delete this Person?");
+
     if (result) {
       removePerson({
         variables: {
@@ -82,6 +84,7 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
               },
             },
           });
+          navigate("/");
         },
       });
     }
