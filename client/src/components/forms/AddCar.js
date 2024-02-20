@@ -41,6 +41,11 @@ const AddCar = () => {
         });
       },
     });
+    setYear("");
+    setMake("");
+    setModel("");
+    setPrice("");
+    setOption("");
   };
 
   const isFormValid =

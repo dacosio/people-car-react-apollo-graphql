@@ -10,17 +10,13 @@ const LearnMore = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const client = useApolloClient();
-  const cachedData = client.readQuery({
-    query: GET_PERSON,
-    variables: { id: id },
-  });
-  console.log("🚀 ~ LearnMore ~ cachedData:", cachedData);
+
   const { loading, error, data } = useQuery(GET_PERSON, {
     variables: {
       id: id,
     },
   });
-
+  //adding this line to ensure i am getting the data from the query, not from cache
   useEffect(() => {
     client.resetStore();
   }, []);
