@@ -51,16 +51,51 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
         variables: {
           id,
         },
-        update(cache) {
-          cache.modify({
-            fields: {
-              cars(existingCarsRefs, { readField }) {
-                return existingCarsRefs.filter(
-                  (carRef) => id !== readField("id", carRef)
-                );
+        update(cache, { data: { deleteCar } }) {
+          if (result && itemPersonId) {
+            const { person } = cache.readQuery({
+              query: GET_PERSON,
+              variables: {
+                id: itemPersonId,
               },
-            },
-          });
+            });
+
+            const updatedPersonCars = person.cars.filter(
+              (car) => car.id !== deleteCar.id
+            );
+            cache.writeQuery({
+              query: GET_PERSON,
+              variables: {
+                id: itemPersonId,
+              },
+              data: {
+                person: {
+                  ...person,
+                  cars: updatedPersonCars,
+                },
+              },
+            });
+
+            cache.modify({
+              fields: {
+                cars(existingCarsRefs, { readField }) {
+                  return existingCarsRefs.filter(
+                    (carRef) => id !== readField("id", carRef)
+                  );
+                },
+              },
+            });
+          } else if (result) {
+            cache.modify({
+              fields: {
+                cars(existingCarsRefs, { readField }) {
+                  return existingCarsRefs.filter(
+                    (carRef) => id !== readField("id", carRef)
+                  );
+                },
+              },
+            });
+          }
         },
       });
     }
@@ -98,7 +133,6 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
         lastName: lastVal,
       },
       update(cache, { data: { updatePerson } }) {
-        console.log("🚀 ~ update ~ updatePerson:", updatePerson);
         const data = cache.readQuery({ query: GET_PEOPLE });
 
         cache.writeQuery({

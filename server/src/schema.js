@@ -202,7 +202,6 @@ const resolvers = {
           );
         }
       }
-      console.log("🚀 ~ deletedCar:", deletedCar);
 
       return deletedCar;
     },
