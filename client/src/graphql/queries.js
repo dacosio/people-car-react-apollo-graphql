@@ -30,6 +30,7 @@ export const GET_PERSON = gql`
         make
         model
         price
+        personId
       }
     }
   }

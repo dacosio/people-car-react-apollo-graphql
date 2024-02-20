@@ -120,62 +120,37 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
         price: parseFloat(price),
         personId: option,
       },
-
-      update: (cache, { data: { updateCar } }) => {
-        console.log("🚀 ~ handleUpdateCar ~ updateCar:", updateCar);
-        const cachedCarData = cache.readQuery({ query: GET_CARS });
-        const cachedPerson = cache.readQuery({
-          query: GET_PERSON,
-          variables: {
-            id: itemPersonId,
+      update(cache) {
+        // Remove the car from the cache of the previous person
+        cache.modify({
+          id: cache.identify(itemPersonId), // Use the ID of the previous person
+          fields: {
+            cars(existingCarsRefs, { readField }) {
+              return existingCarsRefs.filter(
+                (carRef) => cId !== readField("id", carRef)
+              );
+            },
           },
         });
-        const updatedCars = cachedCarData.cars.map((car) =>
-          car.id === cId ? updateCar : car
-        );
-        let updatedSingleCar;
-        if (cachedPerson) {
-          console.log("🚀 ~ handleUpdateCar ~ cachedPerson:", cachedPerson);
-
-          updatedSingleCar =
-            cachedPerson.person.cars
-              .filter((car) => car.id !== updateCar.id)
-              .map((c) => {
-                return {
-                  personId: itemPersonId,
-                  ...c,
-                };
-              }) || [];
-        }
-        // if (itemPersonId && cachedPerson) {
-        //   console.log("item");
-        //   const updatedSingleCar = cachedPerson.person.cars.filter(
-        //     (car) => car.id !== updateCar.id
-        //   );
-        //   console.log(
-        //     "🚀 ~ handleUpdateCar ~ updatedSingleCar:",
-        //     updatedSingleCar
-        //   );
-        //   console.log("🚀 ~ handleUpdateCar ~ cachedPerson:", cachedPerson);
-        //   console.log(updateCar.id);
-
-        //   cache.writeQuery({
-        //     query: GET_PERSON,
-        //     date: {
-        //       ...cachedPerson,
-        //       cars: updatedSingleCar,
+        // Add the car to the cache of the new person
+        // cache.modify({
+        //   id: cache.identify({ id: option }), // Use the ID of the new person
+        //   fields: {
+        //     cars(existingCars = []) {
+        //       const newCarRef = cache.writeFragment({
+        //         data: {
+        //           __typename: "Car",
+        //           id: cId,
+        //           year: Number(year),
+        //           make,
+        //           model,
+        //           price: parseFloat(price),
+        //         },
+        //       });
+        //       return [...existingCars, newCarRef];
         //     },
-        //   });
-        // }
-        console.log(updatedSingleCar);
-        cache.writeQuery({
-          query: GET_CARS,
-          data: {
-            ...cachedCarData,
-            // cars: itemPersonId && cachedPerson ? updatedSingleCar : updatedCars,
-            cars: updatedCars,
-          },
-        });
+        //   },
+        // });
       },
     });
     setEditCarId(null);
@@ -194,6 +169,7 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
 
       update: (cache, { data: { updateCar } }) => {
         const cachedCarData = cache.readQuery({ query: GET_CARS });
+
         const updatedCars = cachedCarData.cars.map((car) =>
           car.id === cId ? updateCar : car
         );
@@ -206,7 +182,7 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
           },
         });
       },
-    });
+    }).then((res) => console.log(res));
     setEditCarId(null);
   };
 
@@ -216,7 +192,6 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
     model.trim() !== "" &&
     price.toString().trim() !== "" &&
     option !== "";
-
   return (
     <Container sx={{ marginBottom: 2 }}>
       <Grid
@@ -448,14 +423,23 @@ const CarPersonItem = ({ id, firstName, lastName, cars, itemPersonId }) => {
                           size="small"
                           disabled={!isCarFormValid}
                           onClick={() => {
-                            handleUpdateCar(
-                              cId,
-                              option,
-                              year,
-                              make,
-                              model,
-                              price
-                            );
+                            !itemPersonId
+                              ? handleUpdateCar(
+                                  cId,
+                                  option,
+                                  year,
+                                  make,
+                                  model,
+                                  price
+                                )
+                              : handleUpdatePersonCar(
+                                  cId,
+                                  option,
+                                  year,
+                                  make,
+                                  model,
+                                  price
+                                );
                           }}>
                           Submit
                         </Button>

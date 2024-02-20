@@ -10,21 +10,23 @@ const LearnMore = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const client = useApolloClient();
+  const cachedData = client.readQuery({
+    query: GET_PERSON,
+    variables: { id: id },
+  });
+  console.log("🚀 ~ LearnMore ~ cachedData:", cachedData);
   const { loading, error, data } = useQuery(GET_PERSON, {
     variables: {
-      id: id, // Use the id from useParams
+      id: id,
     },
   });
 
-  //I added this to refresh the cache and get the real/non-cached data from GET_PERSON
   useEffect(() => {
     client.resetStore();
   }, []);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
-  // const { id: personId, firstName, lastName, cars } = data;
-  console.log("🚀 ~ LearnMore ~ data:", data);
 
   return (
     <Container>
